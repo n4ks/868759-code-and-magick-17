@@ -1,7 +1,7 @@
 # Учебный проект «Код и Магия» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дмитрий Мазур](https://up.htmlacademy.ru/javascript/17/user/868759).
-* Наставник: `Неизвестно`.
+* Наставник: `Евгений Алипкин`.
 
 ---
 
