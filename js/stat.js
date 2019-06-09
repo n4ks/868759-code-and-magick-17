@@ -30,10 +30,13 @@ changeBarColor = function (playerName) {
   var min = 0.10;
   var max = 1;
   var barColor = PLAYER_COLOR;
+
   if (playerName !== 'Вы') {
-    barColor = `rgba(0, 0, 255, ${(Math.random() *(max - min) + min).toFixed(2)})`;
+    var randomOpacity = (Math.random() * (max - min) + min).toFixed(2);
+    barColor = 'rgba(0, 0, 255,' + randomOpacity + ')';
+    // barColor = `rgba(0, 0, 255, ${(Math.random() *(max - min) + min).toFixed(2)})`;
   }
-  // return playerName === 'Вы' ? 'rgba(255, 0, 0, 1)' : `rgba(0, 0, 255, ${(Math.random() *(max - min) + min).toFixed(2)})`;
+  // return playerName === 'Вы' ? PLAYER_COLOR : `rgba(0, 0, 255, ${(Math.random() *(max - min) + min).toFixed(2)})`;
 
   return barColor;
 }
