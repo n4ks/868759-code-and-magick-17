@@ -28,11 +28,11 @@ var getMaxElement = function (arr) {
 };
 
 var changeBarColor = function (playerName) {
-  var min = 0.10;
-  var max = 1;
   var barColor = PLAYER_COLOR;
 
   if (playerName !== 'Вы') {
+    var min = 0.10;
+    var max = 1;
     var randomOpacity = (Math.random() * (max - min) + min).toFixed(2);
     barColor = 'rgba(0, 0, 255,' + randomOpacity + ')';
     // barColor = `rgba(0, 0, 255, ${(Math.random() *(max - min) + min).toFixed(2)})`;
