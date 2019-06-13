@@ -60,10 +60,10 @@ window.renderStatistics = function (ctx, players, times) {
     barFinalHeight = (BAR_HEIGHT * times[i]) / maxTime;
     barFreeSpace = BAR_HEIGHT - barFinalHeight;
 
-    ctx.fillText(Math.ceil(times[i]), CLOUD_X + (FONT_GAP * GAP_MULTIPLIER) + ((BAR_WIDTH + GAP) * i), CLOUD_Y + ((FONT_GAP * GAP_MULTIPLIER) * GAP_MULTIPLIER) + barFreeSpace);
+    ctx.fillText(Math.ceil(times[i]), CLOUD_X + (FONT_GAP * GAP_MULTIPLIER) + ((BAR_WIDTH + BAR_WIDTH + GAP) * i), CLOUD_Y + ((FONT_GAP * GAP_MULTIPLIER) * GAP_MULTIPLIER) + barFreeSpace);
     ctx.fillStyle = changeBarColor(players[i]);
-    ctx.fillRect(CLOUD_X + (FONT_GAP * GAP_MULTIPLIER) + ((BAR_WIDTH + GAP) * i), CLOUD_Y + ((FONT_GAP * GAP_MULTIPLIER) * GAP_MULTIPLIER + GAP) + barFreeSpace, BAR_WIDTH, barFinalHeight);
+    ctx.fillRect(CLOUD_X + (FONT_GAP * GAP_MULTIPLIER) + ((BAR_WIDTH + BAR_WIDTH + GAP) * i), CLOUD_Y + ((FONT_GAP * GAP_MULTIPLIER) * GAP_MULTIPLIER + GAP) + barFreeSpace, BAR_WIDTH, barFinalHeight);
     ctx.fillStyle = '#000';
-    ctx.fillText(players[i], CLOUD_X + (FONT_GAP * GAP_MULTIPLIER) + (BAR_WIDTH + GAP) * i, CLOUD_Y + ((FONT_GAP * GAP_MULTIPLIER) * GAP_MULTIPLIER + GAP + FONT_GAP) + BAR_HEIGHT);
+    ctx.fillText(players[i], CLOUD_X + (FONT_GAP * GAP_MULTIPLIER) + (BAR_WIDTH + BAR_WIDTH + GAP) * i, CLOUD_Y + ((FONT_GAP * GAP_MULTIPLIER) * GAP_MULTIPLIER + GAP + FONT_GAP) + BAR_HEIGHT);
   }
 };
