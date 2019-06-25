@@ -2,17 +2,8 @@
 
 (function () {
   var CHARACTERS_COUNT = 4;
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
 
   var setup = document.querySelector('.setup');
-  var setupOpenBtn = document.querySelector('.setup-open-icon');
-  var setupCloseBtn = setup.querySelector('.setup-close');
-  var userNameInput = setup.querySelector('.setup-user-name');
-  var setupStartingPos = {
-    x: null,
-    y: null
-  };
   var names = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
   var surnames = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
   var coatColors = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
@@ -24,6 +15,7 @@
   var characterTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
   var charactersFragment = document.createDocumentFragment();
 
+  var userNameInput = setup.querySelector('.setup-user-name');
   var setupWizard = document.querySelector('.setup-player');
   var wizardCoat = setupWizard.querySelector('.wizard-coat');
   var wizardCoatInput = setupWizard.querySelector('input[name="coat-color"]');
@@ -76,59 +68,6 @@
 
   charactersList.appendChild(charactersFragment);
 
-  // Открытие/закрытие попапа
-
-  document.querySelector('.setup-similar').classList.remove('hidden');
-
-  var onPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      closePopup();
-    }
-  };
-
-  var openPopup = function () {
-    setup.classList.remove('hidden');
-    document.addEventListener('keydown', onPopupEscPress);
-  };
-
-  var closePopup = function () {
-    // Если диалог перемещался - при закрытии устанавливаем начальные координаты
-    if (setup.offsetTop !== setupStartingPos.y && setup.offsetLeft !== setupStartingPos.x) {
-      setup.style.top = setupStartingPos.y + 'px';
-      setup.style.left = setupStartingPos.x + 'px';
-    }
-
-    setup.classList.add('hidden');
-    document.removeEventListener('keydown', onPopupEscPress);
-  };
-
-
-  setupOpenBtn.addEventListener('click', function () {
-    openPopup();
-  });
-
-  setupOpenBtn.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      openPopup();
-    }
-  });
-
-  setupCloseBtn.addEventListener('click', function () {
-    closePopup();
-  });
-
-  setupCloseBtn.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      closePopup();
-    }
-  });
-
-  userNameInput.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      evt.stopPropagation();
-    }
-  });
-
   userNameInput.addEventListener('invalid', function () {
     if (userNameInput.validity.tooShort) {
       userNameInput.setCustomValidity('Имя персонажа не менее 2х символов');
@@ -157,66 +96,6 @@
     var fireballColor = fireballColors[getRandomArrayElement(fireballColors.length)];
     wizardFireball.style.background = fireballColor;
     wizardFireballInput.value = fireballColor;
-  });
-
-  // Перемещение попапа
-  var dialogHandler = document.querySelector('.upload');
-
-  dialogHandler.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
-
-    var dragged = false;
-
-    // Если попап перемещают - сохраняем начальные координаты окна
-    setupStartingPos = {
-      x: setup.offsetLeft,
-      y: setup.offsetTop
-    };
-
-    // Получаем координаты клика по аватарке
-    var coords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-
-    var onMouseMove = function (moveEvt) {
-      dragged = true;
-
-      // Получаем значения сдвига
-      var dialogShift = {
-        x: coords.x - moveEvt.clientX,
-        y: coords.y - moveEvt.clientY
-      };
-
-      // Переопределяем координаты под новую позицию
-      coords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-
-      setup.style.top = (setup.offsetTop - dialogShift.y) + 'px';
-      setup.style.left = (setup.offsetLeft - dialogShift.x) + 'px';
-    };
-
-    var onMouseUp = function (upEvt) {
-      upEvt.preventDefault();
-
-      if (dragged) {
-        // Предотвращаем клик по аватарке
-        var onClickPreventDefault = function (clickEvt) {
-          clickEvt.preventDefault();
-          dialogHandler.removeEventListener('click', onClickPreventDefault);
-        };
-
-        dialogHandler.addEventListener('click', onClickPreventDefault);
-      }
-
-      document.removeEventListener('mousemove', onMouseMove);
-      dialogHandler.removeEventListener('mouseup', onMouseUp);
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    dialogHandler.addEventListener('mouseup', onMouseUp);
   });
 
   // Перемещение предмета в инвентарь
