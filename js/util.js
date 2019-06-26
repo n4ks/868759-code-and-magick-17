@@ -5,7 +5,6 @@
   var ESC_KEYCODE = 27;
 
   window.util = {
-
     isEscEvent: function (evt, action) {
       if (evt.keyCode === ESC_KEYCODE) {
         action();
@@ -18,6 +17,12 @@
     },
     stopEventPropagation: function (evt) {
       evt.stopPropagation();
+    },
+
+    getRandomArrayElement: function (arrayLength) {
+      var element = Math.floor(Math.random() * arrayLength);
+
+      return element;
     }
   };
 })();
