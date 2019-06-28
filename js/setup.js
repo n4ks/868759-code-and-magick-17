@@ -18,8 +18,6 @@
       inputField: setupWizard.querySelector('input[name="fireball-color"]')
     }
   };
-  // s
-  // e
 
   userNameInput.addEventListener('invalid', function () {
     if (userNameInput.validity.tooShort) {
@@ -43,4 +41,22 @@
   };
 
   setupElementsColors(coloringElements);
+
+  // Отправка данных на сервер
+  var submitData = function () {
+    var form = setup.querySelector('.setup-wizard-form');
+    var onSuccess = function (response) {
+      console.log(response);
+      setup.classList.add('hidden');
+    };
+    var onError = function (response) {
+      console.log(response);
+    };
+
+    form.addEventListener('submit', function (evt) {
+      window.backend.submit(new FormData(form), onSuccess, onError);
+      evt.preventDefault();
+    });
+  };
+  submitData();
 })();
