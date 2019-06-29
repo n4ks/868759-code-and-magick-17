@@ -1,6 +1,13 @@
 'use strict';
 
 window.backend = (function () {
+  var Code = {
+    SUCCESS: 200,
+    BAD_REQUEST_ERROR: 400,
+    UNAUTHORIZED_ERROR: 401,
+    NOT_FOUND_ERROR: 404,
+    SERVER_ERROR: 500
+  };
 
   return {
     load: function (onSuccess, onError) {
@@ -9,10 +16,24 @@ window.backend = (function () {
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        onSuccess(xhr.response);
+        if (xhr.status === 200) {
+          onSuccess(xhr.response);
+        } else {
+          onError('Произошла ошибка соединения');
+        }
       });
 
+      xhr.addEventListener('error', function () {
+        onError('Произошла ошибка соединения');
+      });
+      xhr.addEventListener('timeout', function () {
+        onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      });
+
+      xhr.timeout = 10000;
+
       xhr.open('GET', URL);
+      xhr.send();
     },
     submit: function (data, onSuccess, onError) {
       var URL = 'https://js.dump.academy/code-and-magick';
@@ -20,25 +41,29 @@ window.backend = (function () {
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        var error;
+
+        var statusMessage;
         switch (xhr.status) {
-          case 200:
-            onSuccess('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
+          case Code.SUCCESS:
+            onSuccess();
             break;
-          case 400:
-            error = 'Неверный запрос';
+          case Code.BAD_REQUEST_ERROR:
+            statusMessage = 'Неверный запрос';
             break;
-          case 401:
-            error = 'Пользователь не авторизован';
+          case Code.UNAUTHORIZED_ERROR:
+            statusMessage = 'Пользователь не авторизован';
             break;
-          case 404:
-            error = 'Ничего не найдено';
+          case Code.NOT_FOUND_ERROR:
+            statusMessage = 'Ничего не найдено';
+            break;
+          case Code.SERVER_ERROR:
+            statusMessage = 'Ошибка сервера';
             break;
           default:
-            error = 'Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText;
+            statusMessage = 'Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText;
         }
-        if (error) {
-          onError(error);
+        if (statusMessage) {
+          onError(statusMessage);
         }
       });
 

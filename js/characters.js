@@ -3,55 +3,62 @@
 (function () {
   var CHARACTERS_COUNT = 4;
 
-  var names = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-  var surnames = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
-  var characters = [];
+  var setup = document.querySelector('.setup');
+  var form = setup.querySelector('.setup-wizard-form');
+  var charactersFragment = document.createDocumentFragment();
   var charactersList = document.querySelector('.setup-similar-list');
   var characterTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-  var charactersFragment = document.createDocumentFragment();
-
-  var getRandomNickname = function (namesLength, surnamesLength) {
-    var nickname = names[window.util.getRandomArrayElement(namesLength)] + ' ' + surnames[window.util.getRandomArrayElement(surnamesLength)];
-
-    return nickname;
-  };
-
-  var generateCharactersStats = function (characterCount) {
-    var charArray = [];
-
-    for (var i = 0; i < characterCount; i++) {
-
-      var character = {
-        name: getRandomNickname(names.length, surnames.length),
-        coatColor: window.setColor('coat'),
-        eyesColor: window.setColor('eyes')
-      };
-
-      charArray.push(character);
-    }
-
-    return charArray;
-  };
-
-  characters = generateCharactersStats(CHARACTERS_COUNT);
 
   var generateCharacterElement = function (character) {
     var characterElement = characterTemplate.cloneNode(true);
 
     characterElement.querySelector('.setup-similar-label').textContent = character.name;
-    characterElement.querySelector('.wizard-coat').style.fill = character.coatColor;
-    characterElement.querySelector('.wizard-eyes').style.fill = character.eyesColor;
+    characterElement.querySelector('.wizard-coat').style.fill = character.colorCoat;
+    characterElement.querySelector('.wizard-eyes').style.fill = character.coloarEyes;
 
     return characterElement;
   };
 
-  var appendFragmentElements = function (fragment, array) {
-    for (var i = 0; i < array.length; i++) {
-      fragment.appendChild(generateCharacterElement(array[i]));
-    }
+  var onError = function (statusMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = statusMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
   };
 
-  appendFragmentElements(charactersFragment, characters);
+  // Получение данных с сервера
+  var getData = function () {
 
-  charactersList.appendChild(charactersFragment);
+    var onSuccess = function (response) {
+      for (var i = 0; i < CHARACTERS_COUNT; i++) {
+        var randomCharacter = response[window.util.getRandomArrayElement(response.length)];
+        charactersFragment.appendChild(generateCharacterElement(randomCharacter));
+      }
+      charactersList.appendChild(charactersFragment);
+      document.querySelector('.setup-similar').classList.remove('hidden');
+    };
+    window.backend.load(onSuccess, onError);
+  };
+
+  getData();
+
+  // Отправка данных на сервер
+  var submitData = function () {
+
+    var onSuccess = function () {
+      setup.classList.add('hidden');
+    };
+
+    form.addEventListener('submit', function (evt) {
+      window.backend.submit(new FormData(form), onSuccess, onError);
+      evt.preventDefault();
+    });
+  };
+
+  submitData();
 }());
