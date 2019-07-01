@@ -11,8 +11,6 @@
   };
 
   // Открытие/закрытие попапа
-  document.querySelector('.setup-similar').classList.remove('hidden');
-
   var onPopupEscPress = function (evt) {
     window.util.isEscEvent(evt, closePopup);
   };

@@ -42,6 +42,8 @@
         element.style.fill = color;
         fieldInput.value = color;
       }
+
+      window.util.preventDebounce(window.characters.setCharactersFilter);
     });
   };
 }());

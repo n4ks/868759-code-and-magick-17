@@ -5,21 +5,19 @@
   var userNameInput = setup.querySelector('.setup-user-name');
   var setupWizard = document.querySelector('.setup-player');
   var coloringElements = {
-    'coat': {
+    coat: {
       wizardElement: setupWizard.querySelector('.wizard-coat'),
       inputField: setupWizard.querySelector('input[name="coat-color"]')
     },
-    'eyes': {
+    eyes: {
       wizardElement: setupWizard.querySelector('.wizard-eyes'),
       inputField: setupWizard.querySelector('input[name="eyes-color"]')
     },
-    'fireball': {
+    fireball: {
       wizardElement: setupWizard.querySelector('.setup-fireball-wrap'),
       inputField: setupWizard.querySelector('input[name="fireball-color"]')
     }
   };
-  // s
-  // e
 
   userNameInput.addEventListener('invalid', function () {
     if (userNameInput.validity.tooShort) {

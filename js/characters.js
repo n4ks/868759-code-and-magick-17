@@ -1,57 +1,82 @@
 'use strict';
 
 (function () {
-  var CHARACTERS_COUNT = 4;
+  var setup = document.querySelector('.setup');
+  var form = setup.querySelector('.setup-wizard-form');
 
-  var names = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-  var surnames = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
+  // Для фильтрации
   var characters = [];
-  var charactersList = document.querySelector('.setup-similar-list');
-  var characterTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-  var charactersFragment = document.createDocumentFragment();
-
-  var getRandomNickname = function (namesLength, surnamesLength) {
-    var nickname = names[window.util.getRandomArrayElement(namesLength)] + ' ' + surnames[window.util.getRandomArrayElement(surnamesLength)];
-
-    return nickname;
+  var setupWizard = document.querySelector('.setup-player');
+  var mainCharacter = {
+    coat: setupWizard.querySelector('.wizard-coat'),
+    eyes: setupWizard.querySelector('.wizard-eyes'),
   };
 
-  var generateCharactersStats = function (characterCount) {
-    var charArray = [];
+  // Получение данных с сервера
+  var getData = function () {
+    var successCallback = function (response) {
+      characters = response;
+      window.render(characters);
+    };
 
-    for (var i = 0; i < characterCount; i++) {
+    var onError = function (showDialogTemplate) {
+      showDialogTemplate();
+    };
 
-      var character = {
-        name: getRandomNickname(names.length, surnames.length),
-        coatColor: window.setColor('coat'),
-        eyesColor: window.setColor('eyes')
+    window.backend.load(successCallback, onError);
+  };
+  getData();
+
+  // Отправка данных на сервер
+  var submitData = function () {
+    var successCallback = function () {
+      setup.classList.add('hidden');
+    };
+
+    form.addEventListener('submit', function (evt) {
+      var errorCallback = function (showErrorTemplate) {
+        showErrorTemplate();
       };
 
-      charArray.push(character);
+      window.backend.submit(new FormData(form), successCallback, errorCallback);
+      evt.preventDefault();
+    });
+  };
+  submitData();
+
+  var getRank = function (character) {
+    var rank = 0;
+
+    if (character.colorCoat === mainCharacter.coat.style.fill) {
+      rank += 2;
+    }
+    if (character.colorEyes === mainCharacter.eyes.style.fill) {
+      rank += 1;
     }
 
-    return charArray;
+    return rank;
   };
 
-  characters = generateCharactersStats(CHARACTERS_COUNT);
-
-  var generateCharacterElement = function (character) {
-    var characterElement = characterTemplate.cloneNode(true);
-
-    characterElement.querySelector('.setup-similar-label').textContent = character.name;
-    characterElement.querySelector('.wizard-coat').style.fill = character.coatColor;
-    characterElement.querySelector('.wizard-eyes').style.fill = character.eyesColor;
-
-    return characterElement;
-  };
-
-  var appendFragmentElements = function (fragment, array) {
-    for (var i = 0; i < array.length; i++) {
-      fragment.appendChild(generateCharacterElement(array[i]));
+  var namesComparer = function (left, right) {
+    if (left > right) {
+      return 1;
+    } else if (left < right) {
+      return -1;
+    } else {
+      return 0;
     }
   };
+  // Фильтрация похожих персонажей перед выводом на экран
+  window.characters = {
+    setCharactersFilter: function () {
 
-  appendFragmentElements(charactersFragment, characters);
-
-  charactersList.appendChild(charactersFragment);
+      window.render(characters.sort(function (left, right) {
+        var rankDiff = getRank(right) - getRank(left);
+        if (rankDiff === 0) {
+          rankDiff = namesComparer(left.name, right.name);
+        }
+        return rankDiff;
+      }));
+    }
+  };
 }());
